@@ -1,0 +1,227 @@
+/* app/globals.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/fonts/Hanken_Grotesk/HankenGrotesk-VariableFont_wght.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+:root {
+  --primary-color: #FDF7F3;
+  --background-color: #FDF7F3;
+  --text-color: #333;
+  --secondary-text-color: #666;
+  --border-color: #a38b8b;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  /* New colors based on Figma for consistency */
+  --card-background-color: #ffffff;
+  --figma-primary: #E2002E;
+  --figma-text-dark: #1A1A1A;
+  --figma-text-light: #595959;
+  --figma-border: #E6E6E6;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: 'Hanken Grotesk', 'Roboto', sans-serif;
+  background-color: #FDF7F3; /* A neutral background for the fixed container */
+  color: var(--text-color);
+}
+
+/* 1920x1080 Container for the entire application */
+.app-container {
+  width: 1920px;
+  height: 1080px;
+  background-color: var(--background-color);
+  margin: 0 auto;
+  overflow: hidden; /* Prevents scrolling */
+  position: relative;
+}
+
+/* Header adjusted to fit the new layout */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2.5rem 5rem; /* Increased padding for the larger resolution */
+  z-index: 1000;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 3rem; /* Adjusted font size */
+}
+
+.home-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Main Content and Typography */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 5rem; /* Adjusted padding */
+  width: 100%;
+  height: calc(100% - 100px); /* Adjust based on header height */
+  overflow-y: auto;
+  color: #FDF7F3;
+}
+
+.title {
+  font-size: 56px;
+  font-weight: 700;
+  color: #69181D;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 44px;
+  color: #69181D;
+  font-weight: 100;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+/* Video Grid and Cards */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three columns for a better fit */
+  gap: 3rem; /* Increased gap */
+  width: 100%;
+  max-width: 1700px;
+}
+
+.video-card {
+  border-radius: 20px; /* Larger radius for the new size */
+  overflow: hidden;
+  /* box-shadow: var(--box-shadow); */
+  /* background-color: var(--card-background-color); */
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  /* transition: transform 0.2s ease, box-shadow 0.2s ease; */
+}
+
+/* .video-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+} */
+
+.video-thumbnail {
+  position: relative;
+  width: 100%;
+  height: 250px; /* Adjusted thumbnail size */
+  border-radius: 20px solid;
+}
+
+.video-info {
+  padding: 1.5rem; /* Increased padding */
+  text-align: left;
+  flex-grow: 1;
+}
+
+.video-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.video-description {
+  font-size: 1.1rem;
+  color: var(--figma-text-light);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Video Controls on Card */
+.video-controls {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  align-items: center;
+}
+
+.control-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  transition: transform 0.1s ease;
+}
+
+.control-button:hover {
+  transform: scale(1.1);
+}
+
+/* Progress Bar at the top of the control page */
+.current-video-progress {
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: var(--card-background-color);
+  border-radius: 10px;
+  box-shadow: var(--box-shadow);
+}
+
+input[type="range"] {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 10px;
+  background: var(--figma-border);
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--figma-primary);
+  border-radius: 50%;
+  cursor: grab;
+}
+
+/* Display Page */
+.display-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.placeholder {
+  color: white;
+  font-size: 2rem;
+  text-align: center;
+}
