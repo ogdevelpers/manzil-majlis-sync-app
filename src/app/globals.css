@@ -129,11 +129,12 @@ body {
   border-radius: 20px solid;
 }
 
-.video-info {
-  padding: 1.5rem; /* Increased padding */
-  text-align: left;
-  flex-grow: 1;
-}
+.logo-wrapper {
+    position: absolute;
+    top: 60px;
+    left: 60px;
+    z-index: 10;
+  }
 
 .video-title {
   font-size: 1.5rem;

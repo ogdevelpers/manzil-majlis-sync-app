@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { videos, Video } from '../data/videos';
 import Image from 'next/image';
-import { Play, Pause, RotateCcw } from 'lucide-react';
+// import { Play, Pause, RotateCcw } from 'lucide-react';
 
 const CHANNEL_NAME = 'video-sync-channel';
 
@@ -13,136 +13,6 @@ interface VideoState {
   duration: number;
   isPlaying: boolean;
 }
-
-// CSS Module styles (inline for demonstration)
-const styles = {
-  mainContent: {
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif',
-    backgroundColor: '#f5f5f5',
-    minHeight: '100vh'
-  },
-  title: {
-    fontSize: '32px',
-    fontWeight: 'bold',
-    textAlign: 'center' as const,
-    marginBottom: '8px',
-    color: '#333'
-  },
-  subtitle: {
-    fontSize: '16px',
-    textAlign: 'center' as const,
-    marginBottom: '30px',
-    color: '#666'
-  },
-  currentVideoProgress: {
-    maxWidth: '600px',
-    margin: '0 auto 30px auto',
-    padding: '0 20px'
-  },
-  progressInput: {
-    width: '100%',
-    height: '6px',
-    borderRadius: '3px',
-    background: '#e0e0e0',
-    outline: 'none',
-    cursor: 'pointer'
-  },
-  videoGrid: {
-    display: 'flex',
-    gap: '20px',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    flexWrap: 'wrap' as const,
-    maxWidth: '100vw',
-    margin: '0 auto'
-  },
-  videoCard: {
-    backgroundColor: 'white',
-    borderRadius: '12px',
-    padding: '16px',
-    width: '320px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    transition: 'all 0.3s ease'
-  },
-  videoCardActive: {
-    backgroundColor: 'white',
-    borderRadius: '12px',
-    padding: '16px',
-    width: '320px',
-    boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-    border: '2px solid #8B4513',
-    transform: 'scale(1.02)'
-  },
-  videoThumbnail: {
-    width: '100%',
-    height: '180px',
-    backgroundColor: '#000',
-    borderRadius: '8px',
-    marginBottom: '12px',
-    position: 'relative' as const,
-    overflow: 'hidden'
-  },
-  videoInfo: {
-    display: 'flex',
-    flexDirection: 'column' as const
-  },
-  videoTitle: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-    marginBottom: '8px',
-    color: '#333'
-  },
-  videoDescription: {
-    fontSize: '14px',
-    color: '#666',
-    lineHeight: '1.4',
-    marginBottom: '16px'
-  },
-  videoControls: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px'
-  },
-  controlButton: {
-    width: '40px',
-    height: '40px',
-    backgroundColor: '#8B4513',
-    borderRadius: '50%',
-    border: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease'
-  },
-  controlButtonHover: {
-    backgroundColor: '#A0522D',
-    transform: 'scale(1.05)'
-  },
-  progressContainer: {
-    flex: 1,
-    height: '4px',
-    backgroundColor: '#e0e0e0',
-    borderRadius: '2px',
-    overflow: 'hidden',
-    cursor: 'pointer',
-    marginLeft: '8px',
-    marginRight: '8px'
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#8B4513',
-    borderRadius: '2px',
-    transition: 'width 0.3s ease'
-  },
-  timeDisplay: {
-    fontSize: '12px',
-    color: '#666',
-    minWidth: '80px',
-    textAlign: 'right' as const
-  }
-};
 
 export default function HomePage() {
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
@@ -169,6 +39,21 @@ export default function HomePage() {
         setProgress(0);
         setCurrentTime(0);
       }
+    }
+  };
+
+    const handleHomeClick = (): void => {
+    if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+      const channel = new BroadcastChannel(CHANNEL_NAME);
+      channel.postMessage({ type: 'HOME_ACTION' });
+      channel.close();
+      
+      // Reset the active video state
+      setActiveVideoId(null);
+      setIsPlaying(false);
+      setProgress(0);
+      setCurrentTime(0);
+      setDuration(0);
     }
   };
 
@@ -235,116 +120,276 @@ export default function HomePage() {
   }, [activeVideoId]);
 
   return (
-    <main className="main-content" style={styles.mainContent}>
-      <h1 className="title" style={styles.title}>Explore Manzil Majlis Properties</h1>
-      <p className="subtitle" style={styles.subtitle}>Tap on play to begin</p>
+    <>
+      <style jsx>{`
+        .main-content {
+          width: 1920px;
+          height: calc(1080px - 106px); /* Subtract header height */
+          padding: 60px 80px;
+          background: #FFFAF7;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: center;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          overflow: hidden;
+        }
 
-      {activeVideoId && (
-        <div className="current-video-progress" style={styles.currentVideoProgress}>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={progress}
-            style={styles.progressInput}
-            onMouseDown={handleSeekStart}
-            onMouseUp={handleSeekEnd}
-            onChange={(e) => {
-              setProgress(e.target.valueAsNumber);
-              handleSeek(e);
-            }}
-          />
-        </div>
-      )}
+        .title {
+          font-size: 56px;
+          font-weight: 700;
+          color: #69181D;
+          text-align: center;
+          margin: 0 0 16px 0;
+          letter-spacing: -0.5px;
+        }
 
-      <div className="video-grid" style={styles.videoGrid}>
-        {videos.map((video: Video) => (
-          <div 
-            key={video.id} 
-            className={activeVideoId === video.id ? "video-card active" : "video-card"}
-            style={activeVideoId === video.id ? styles.videoCardActive : styles.videoCard}
-          >
-            <div className="video-thumbnail" style={styles.videoThumbnail}>
-              <Image
-                src={video.thumbnail}
-                alt={video.title}
-                fill={true}
-                style={{ objectFit: 'cover' }}
-              />
+        .subtitle {
+          font-size: 44px;
+          font-weight: 400;
+          color: #69181D;
+          text-align: center;
+          margin: 0 0 80px 0;
+        }
+
+        .current-video-progress {
+          width: 600px;
+          margin-bottom: 60px;
+        }
+
+        .progress-input {
+          width: 100%;
+          height: 8px;
+          background: #e0e0e0;
+          border-radius: 4px;
+          outline: none;
+          cursor: pointer;
+          -webkit-appearance: none;
+          appearance: none;
+        }
+
+        .progress-input::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          background: #8B4513;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+
+        .progress-input::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          background: #8B4513;
+          border-radius: 50%;
+          cursor: pointer;
+          border: none;
+        }
+
+        .video-grid {
+          display: flex;
+          justify-content: space-evenly;
+          align-items: flex-start;
+          width: 100%;
+          max-width: 1760px;
+        }
+
+        .video-card {
+          border-radius: 16px;
+          padding: 24px;
+          width: 560px;
+          height: 601px;
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          position: relative;
+        }
+
+        .video-card.active {
+          border: 3px solid #69181D;
+          border-radius: 40px;
+        }
+
+        .video-thumbnail {
+          width: 100%;
+          height: 270px;
+          background: #000;
+          border-radius: 40px;
+          margin-bottom: 20px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .video-info {
+          display: flex;
+          flex-direction: column;
+          padding-top: 1.5rem;
+        }
+
+        .video-title {
+          font-size: 24px;
+          font-weight: 700;
+          color: #333;
+          margin: 0 0 12px 0;
+          line-height: 1.3;
+        }
+
+        .video-description {
+          font-size: 20px;
+          color: #666;
+          line-height: 1.5;
+          margin: 0 0 24px 0;
+        }
+
+        .video-controls {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .control-button {
+          width: 50px;
+          height: 50px;
+          background: #8B4513;
+          border: none;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+
+        .control-button:hover {
+          background: #A0522D;
+          transform: scale(1.1);
+          box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+        }
+
+        .progress-container {
+          flex: 1;
+          height: 6px;
+          background: #e0e0e0;
+          border-radius: 3px;
+          overflow: hidden;
+          cursor: pointer;
+          margin: 0 12px;
+          position: relative;
+        }
+
+        .progress-bar {
+          height: 100%;
+          background: linear-gradient(90deg, #8B4513 0%, #A0522D 100%);
+          border-radius: 3px;
+          transition: width 0.3s ease;
+        }
+
+        .time-display {
+          font-size: 14px;
+          font-weight: 500;
+          color: #666;
+          min-width: 100px;
+          text-align: right;
+          font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        /* Responsive adjustments for exact layout */
+        @media (max-width: 1920px) {
+          .main-content {
+            width: 100vw;
+          }
+        }
+      `}</style>
+
+      <header className="header">
+          <div className="logo">
+            <Image src="images/Logo.svg" alt="Manzil Majlis Logo" width={161} height={106} />
+          </div>
+          <a href="/" onClick={handleHomeClick}>
+            <div className="home-icon">
+              <Image src="images/Home.svg" alt="Home" width={80} height={80} />
             </div>
-            
-            <div className="video-info" style={styles.videoInfo}>
-              <h3 className="video-title" style={styles.videoTitle}>
-                {video.title}
-              </h3>
-              <p className="video-description" style={styles.videoDescription}>
-                {video.description}
-              </p>
+          </a>
+        </header>
+
+      <main className="main-content">
+        <h1 className="title">Explore Manzil Majlis Properties</h1>
+        <p className="subtitle">Tap on play to begin</p>
+
+        <div className="video-grid">
+          {videos.map((video: Video) => (
+            <div 
+              key={video.id} 
+              className={activeVideoId === video.id ? "video-card active" : "video-card"}
+            >
+              <div className="video-thumbnail">
+                <Image
+                  src={video.thumbnail}
+                  alt={video.title}
+                  fill={true}
+                  style={{ objectFit: 'cover' }}
+                />
+              </div>
               
-              <div className="video-controls" style={styles.videoControls}>
-                {activeVideoId === video.id && isPlaying ? (
-                  <button
-                    className="control-button"
-                    style={{
-                      ...styles.controlButton,
-                      ...(hoveredButton === `${video.id}-pause` ? styles.controlButtonHover : {})
-                    }}
-                    onMouseEnter={() => setHoveredButton(`${video.id}-pause`)}
-                    onMouseLeave={() => setHoveredButton(null)}
-                    onClick={() => handleAction(video.id, 'PAUSE')}
-                  >
-                    <Pause size={16} color="white" />
-                  </button>
-                ) : (
-                  <button
-                    className="control-button"
-                    style={{
-                      ...styles.controlButton,
-                      ...(hoveredButton === `${video.id}-play` ? styles.controlButtonHover : {})
-                    }}
-                    onMouseEnter={() => setHoveredButton(`${video.id}-play`)}
-                    onMouseLeave={() => setHoveredButton(null)}
-                    onClick={() => handleAction(video.id, 'PLAY')}
-                  >
-                    <Play size={16} color="white" style={{ marginLeft: '1px' }} />
-                  </button>
-                )}
+              <div className="video-info">
+                <h3 className="video-title">
+                  {video.title}
+                </h3>
+                <p className="video-description">
+                  {video.description}
+                </p>
                 
-                <div 
-                  className="progress-container"
-                  style={styles.progressContainer}
-                  onClick={(e) => handleProgressClick(e, duration || 300)}
-                >
-                  <div 
-                    className="progress-bar"
-                    style={{
-                      ...styles.progressBar,
-                      width: `${progress}%`
-                    }}
-                  />
+                <div className="video-controls">
+                  {activeVideoId === video.id && isPlaying ? (
+                    <button
+                      className="control-button"
+                      onClick={() => handleAction(video.id, 'PAUSE')}
+                    >
+                      <Image src="images/pause.svg" alt="Pause" width={80} height={80} />
+                      {/* <Pause size={20} color="white" /> */}
+                    </button>
+                  ) : (
+                    <button
+                      className="control-button"
+                      onClick={() => handleAction(video.id, 'PLAY')}
+                    >
+                      <Image src="images/play.svg" alt="Play" width={80} height={80} />
+                      {/* <Play size={20} color="white" style={{ marginLeft: '2px' }} /> */}
+                    </button>
+                  )}
+                  
+                  {activeVideoId === video.id && (
+                    <>
+                      <div 
+                        className="progress-container"
+                        onClick={(e) => handleProgressClick(e, duration || 300)}
+                      >
+                        <div 
+                          className="progress-bar"
+                          style={{
+                            width: `${progress}%`
+                          }}
+                        />
+                      </div>
+                      
+                      <div className="time-display">
+                        {formatTime(currentTime)} / {formatTime(duration || 300)}
+                      </div>
+                      
+                      {/* <button
+                        className="control-button"
+                        onClick={() => handleAction(video.id, 'RESTART')}
+                      >
+                        <Image src="images/restart.png" alt="Restart" width={80} height={80} />
+                      </button> */}
+                    </>
+                  )}
                 </div>
-                
-                <div className="time-display" style={styles.timeDisplay}>
-                  {formatTime(currentTime)} / {formatTime(duration || 300)}
-                </div>
-                
-                <button
-                  className="control-button"
-                  style={{
-                    ...styles.controlButton,
-                    ...(hoveredButton === `${video.id}-restart` ? styles.controlButtonHover : {})
-                  }}
-                  onMouseEnter={() => setHoveredButton(`${video.id}-restart`)}
-                  onMouseLeave={() => setHoveredButton(null)}
-                  onClick={() => handleAction(video.id, 'RESTART')}
-                >
-                  <RotateCcw size={16} color="white" />
-                </button>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </main>
+          ))}
+        </div>
+      </main>
+    </>
   );
 }
