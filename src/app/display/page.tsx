@@ -104,6 +104,20 @@ export default function DisplayPage() {
     }
   };
 
+  const getCurrentVideo = () => {
+  if (showLandingVideo) {
+    return landingVideo;
+  } else if (currentVideo) {
+    return currentVideo;
+  } else {
+    return landingVideo;
+  }
+};
+
+const isYouTubeUrl = (url: string) => {
+  return url.includes('youtube.com') || url.includes('youtu.be');
+};
+
   return (
     <>
       <style jsx>{`
@@ -135,15 +149,38 @@ export default function DisplayPage() {
           <Image src="images/Logo.svg" alt="Logo" width={118} height={78} />
         </div>
 
-        <video
-          ref={videoRef}
-          className="video-player"
-          src={getVideoSource()}
-          autoPlay={true}
-          muted={true}
-          controls={false}
-          loop={true}
-        />
+       {(() => {
+  const video = getCurrentVideo();
+
+  if (isYouTubeUrl(video.url)) {
+    const videoIdMatch = video.url.match(
+      /(?:youtube\.com\/(?:embed\/|watch\?v=)|youtu\.be\/)([a-zA-Z0-9_-]+)/
+    );
+    const youtubeId = videoIdMatch ? videoIdMatch[1] : '';
+
+    return (
+      <iframe
+        className="video-player"
+        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${youtubeId}`}
+        frameBorder="0"
+        allow="autoplay; encrypted-media"
+        allowFullScreen
+      />
+    );
+  } else {
+    return (
+      <video
+        ref={videoRef}
+        className="video-player"
+        src={video.url}
+        autoPlay
+        muted
+        controls={false}
+        loop
+      />
+    );
+  }
+})()}
       </div>
     </>
   );
